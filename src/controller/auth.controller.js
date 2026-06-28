@@ -93,14 +93,18 @@ export const generateAccessToken = async (req, res) => {
 
   if (!refreshToken) {
     return res.status(404).json({
-      message: "refresh token invalid ",
+      message: "Invalid refresh token",
     });
   }
-  let decode = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
 
-  if (!decode) {
-    throw new Error("unauthorized");
+  try {
+    let decode = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+  } catch (err) {
+    return res.status(401).json({
+      message: "Invalid refresh token",
+    });
   }
+
   let user = await userModel.findById(decode.id);
 
   if (refreshToken !== user.refreshToken) {
