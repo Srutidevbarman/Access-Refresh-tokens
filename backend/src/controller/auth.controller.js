@@ -78,7 +78,7 @@ export const loginController = async (req, res) => {
     secure: false,
     maxAge: 24 * 60 * 60 * 1000,
   });
-  res.status(201).json({
+  res.status(200).json({
     message: "user logged in succesfully",
     user: {
       id: isUserExists._id,
