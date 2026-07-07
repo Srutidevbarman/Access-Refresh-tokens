@@ -5,12 +5,21 @@ export const axiosInstance = axios.create({
   withCredentials: true,
 });
 
-// axiosInstance.interceptors.request.use(
-//   (response) => {
-//     console.log("axios instance request config =>", response);
-//     // return response;
-//   },
-//   (error) => {
-//     console.log("error in instance", error);
-//   },
-// );
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    let originalReq = error.config;
+    if (error.response.status === 401 || !originalReq.retry) {
+      originalReq.retry = true;
+      try {
+        await axiosInstance.post("/api/auth/access-token");
+        return axiosInstance(originalReq);
+      } catch (error) {
+        window.location.href = "/";
+        return Promise.reject(error);
+      }
+    }
+
+    return Promise.reject(error);
+  },
+);

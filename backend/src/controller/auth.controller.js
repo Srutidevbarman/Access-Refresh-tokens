@@ -70,7 +70,7 @@ export const loginController = async (req, res) => {
     httpOnly: true,
     sameSite: "lax",
     secure: false,
-    maxAge: 10 * 60 * 1000,
+    maxAge: 60 * 1000,
   });
   res.cookie("refreshToken", refreshToken, {
     httpOnly: true,
@@ -96,9 +96,9 @@ export const generateAccessToken = async (req, res) => {
       message: "Invalid refresh token",
     });
   }
-
+  let decode;
   try {
-    let decode = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+    decode = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
   } catch (err) {
     return res.status(401).json({
       message: "Invalid refresh token",
